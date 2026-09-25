@@ -108,8 +108,8 @@ very patient person flipping a very slow flipbook.
 
 Partway through, it politely suggested I playtest and maybe stop the loop.
 I did not see this. Four fifteen-minute ticks queued up while it waited and it handled
-them all at once. It suggested stopping again. I was not looking. It asked me directly with
-a multiple-choice question, and past me - apparently paying attention for exactly one click -
+them all at once. It suggested stopping again. I was asleep. It asked me directly with
+a multiple-choice question, and past me - apparently awake for exactly one click -
 chose **"Add more levels."**
 
 So it added levels. Thirty-four of them. When it ran out of good ideas it wrote a

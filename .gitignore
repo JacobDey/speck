@@ -1,0 +1,6 @@
+# build outputs (web/speck.gba stays tracked so the web page works from a clone)
+/speck.elf
+/speck.gba
+source/levels.h
+levels_preview.png
+__pycache__/

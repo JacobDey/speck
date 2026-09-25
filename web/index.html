@@ -1,0 +1,77 @@
+<!doctype html><html><head><meta charset="utf-8"><title>SPECK</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0;min-height:100%;background:#111;color:#b9a48a;font:14px/1.5 ui-monospace,Consolas,monospace}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px 16px;box-sizing:border-box;min-height:100vh}
+#game{width:min(96vw,960px);aspect-ratio:3/2}
+#keys{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;max-width:960px}
+kbd{display:inline-block;min-width:1.4em;padding:0 5px;border:1px solid #5a4c3c;border-bottom-width:2px;border-radius:3px;background:#221d17;color:#e8c46a;text-align:center}
+</style></head>
+<body><div id="game"></div>
+<div id="keys">
+  <span><kbd>&larr;</kbd><kbd>&rarr;</kbd> move</span>
+  <span><kbd>Z</kbd> jump</span>
+  <span><kbd>X</kbd> stamp sand (hold to repeat)</span>
+  <span><kbd>&darr;</kbd>+<kbd>X</kbd> stamp below</span>
+  <span><kbd>Enter</kbd> start / pause</span>
+  <span><kbd>V</kbd> retry</span>
+</div>
+<script>
+EJS_player="#game"; EJS_core="gba"; EJS_gameUrl="speck.gba"; EJS_gameName="SPECK";
+EJS_pathtodata="https://cdn.emulatorjs.org/stable/data/"; EJS_startOnLoaded=true; EJS_color="#c84";
+// EmulatorJS caches ROMs in IndexedDB and misses rebuilds that keep the same size; the
+// ROM is tiny, so skip the cache and always load the served file.
+EJS_disableDatabases=true;
+// Keep SRAM (unlocked levels, best run) across reloads: EmulatorJS's save file lives in an
+// in-memory FS, so mirror it to localStorage and restore it before the ROM reads it.
+var SPECK_KEY="speck-sram";
+function speckFlushSave(){ try{ EJS_emulator.gameManager.saveSaveFiles(); }catch(e){} }
+EJS_onGameStart=function(){
+  var gm=EJS_emulator.gameManager;
+  EJS_emulator.on("saveSaveFiles", function(data){
+    try{ var s=""; for(var i=0;i<data.length;i++) s+=String.fromCharCode(data[i]); localStorage.setItem(SPECK_KEY, btoa(s)); }catch(e){}
+  });
+  try{
+    var b64=localStorage.getItem(SPECK_KEY);
+    if(b64){
+      var bin=atob(b64), bytes=new Uint8Array(bin.length);
+      for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+      gm.FS.writeFile(gm.getSaveFilePath(), bytes);
+      gm.loadSaveFiles();
+      gm.restart(); // re-boot so the game reads the restored save
+    }
+  }catch(e){}
+  setInterval(speckFlushSave, 5000);
+};
+// Reliable taps: EmulatorJS samples keys once per emulated frame, so when the browser
+// stutters a quick Z/X tap can fall between samples (lost or cut short). Drive those two
+// buttons ourselves and keep each press down for at least MIN_FRAMES emulated frames.
+(function(){
+  var MIN_FRAMES = 3;
+  var KEYS = { KeyZ: 8, KeyX: 0 };           // GBA A (jump), B (stamp) - EmulatorJS indices
+  var down = {};                              // code -> { frame, releasePending }
+  function gm(){ try{ return EJS_emulator && EJS_emulator.gameManager; }catch(e){ return null; } }
+  function release(code){
+    var st = down[code], g = gm();
+    if (!st || !g) return;
+    if (g.getFrameNum() - st.frame >= MIN_FRAMES){ g.simulateInput(0, KEYS[code], 0); delete down[code]; }
+    else requestAnimationFrame(function(){ if (down[code] === st) release(code); });
+  }
+  function onKey(e){
+    if (!(e.code in KEYS)) return;
+    var g = gm(); if (!g || !g.getFrameNum) return;   // not running yet: let EmulatorJS have it
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (e.type === "keydown"){
+      if (e.repeat) return;
+      down[e.code] = { frame: g.getFrameNum() };
+      g.simulateInput(0, KEYS[e.code], 1);
+    } else release(e.code);
+  }
+  addEventListener("keydown", onKey, true);
+  addEventListener("keyup", onKey, true);
+})();
+addEventListener("pagehide", speckFlushSave);
+addEventListener("visibilitychange", function(){ if(document.hidden) speckFlushSave(); });
+</script>
+<script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+</body></html>

@@ -19,6 +19,11 @@ screen with your death count and time.
 | hold L+R, press SELECT on title | Q+E, V | Erase save |
 | hold L, press R | Q, E | Debug: skip to next level |
 
+On the web page a controller works too, mapped by position so it's the same on every brand:
+bottom face button = A, left or right face button = B, bumpers or triggers = L/R, D-pad or
+left stick = D-pad (`web/pad.js`, ported from Special Battle's input layer: stick deadzone
+and trigger thresholds with hysteresis, hot-plugging, and the legend switches to the pad's labels).
+
 ## Rules
 
 - Sand falls and piles. Speck can stand on it; it can't pass through it.

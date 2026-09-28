@@ -5,17 +5,19 @@ html,body{margin:0;min-height:100%;background:#111;color:#b9a48a;font:14px/1.5 u
 body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px 16px;box-sizing:border-box;min-height:100vh}
 #game{width:min(96vw,960px);aspect-ratio:3/2}
 #keys{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;max-width:960px}
+#pad{min-height:1.5em;color:#8a7a66;font-style:italic}
 kbd{display:inline-block;min-width:1.4em;padding:0 5px;border:1px solid #5a4c3c;border-bottom-width:2px;border-radius:3px;background:#221d17;color:#e8c46a;text-align:center}
 </style></head>
 <body><div id="game"></div>
 <div id="keys">
-  <span><kbd>&larr;</kbd><kbd>&rarr;</kbd> move</span>
-  <span><kbd>Z</kbd> jump</span>
-  <span><kbd>X</kbd> stamp sand (hold to repeat)</span>
-  <span><kbd>&darr;</kbd>+<kbd>X</kbd> stamp below</span>
-  <span><kbd>Enter</kbd> start / pause</span>
-  <span><kbd>V</kbd> retry</span>
+  <span><kbd data-b="left">&larr;</kbd><kbd data-b="right">&rarr;</kbd> move</span>
+  <span><kbd data-b="a">Z</kbd> jump</span>
+  <span><kbd data-b="b">X</kbd> stamp sand (hold to repeat)</span>
+  <span><kbd data-b="down">&darr;</kbd>+<kbd data-b="b">X</kbd> stamp below</span>
+  <span><kbd data-b="start">Enter</kbd> start / pause</span>
+  <span><kbd data-b="select">V</kbd> retry</span>
 </div>
+<div id="pad"></div>
 <script>
 EJS_player="#game"; EJS_core="gba"; EJS_gameUrl="speck.gba"; EJS_gameName="SPECK";
 EJS_pathtodata="https://cdn.emulatorjs.org/stable/data/"; EJS_startOnLoaded=true; EJS_color="#c84";
@@ -73,5 +75,7 @@ EJS_onGameStart=function(){
 addEventListener("pagehide", speckFlushSave);
 addEventListener("visibilitychange", function(){ if(document.hidden) speckFlushSave(); });
 </script>
+<!-- Controllers: must load before loader.js (it hides pads from EmulatorJS's own reader). -->
+<script src="pad.js"></script>
 <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
 </body></html>

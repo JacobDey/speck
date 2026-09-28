@@ -506,6 +506,7 @@ static void draw_banner(void) {
     str_int(buf, cur_level + 1); // two digits from level 10 on
     text_center(64, buf, CLR_WHITE);
     text_center(78, level_names[cur_level], COL_SAND);
+    if (level_no_sand[cur_level]) text_center(92, "no sand here", COL_WALL2);
 }
 
 static void show_banner(void) {
@@ -536,8 +537,16 @@ static void save_load(void) {
 #endif
 }
 
+#define SAVE_VER 2
+// Version 1 saves predate the 4 no-sand opening levels: every level number since moved up
+// by 4, and full-run records were for a shorter run.
+#define V1_SHIFT 4
+
+static void save_write(void);
+
 static void save_load_sram(void) {
-    if (SRAM[0] != 'S' || SRAM[1] != 'P' || SRAM[2] != 'K' || SRAM[3] != 1) return;
+    int ver = SRAM[3];
+    if (SRAM[0] != 'S' || SRAM[1] != 'P' || SRAM[2] != 'K' || ver < 1 || ver > SAVE_VER) return;
     save_unlocked = SRAM[4];
     if (save_unlocked < 1 || save_unlocked > NLEVELS) save_unlocked = 1;
     int b = SRAM[5] | (SRAM[6] << 8);
@@ -545,11 +554,17 @@ static void save_load_sram(void) {
     // Bytes 7-10 were added later; older saves (and fresh SRAM) read 0xFFFFFFFF there.
     u32 t = SRAM[7] | (SRAM[8] << 8) | (SRAM[9] << 16) | ((u32)SRAM[10] << 24);
     save_time = (t == 0xFFFFFFFF || t > 0x7FFFFFFF) ? -1 : (int)t;
+    if (ver == 1) {
+        save_unlocked = (save_unlocked > 1) ? save_unlocked + V1_SHIFT : 1;
+        if (save_unlocked > NLEVELS) save_unlocked = NLEVELS;
+        save_best = save_time = -1;
+        save_write();
+    }
 }
 
 static void save_write(void) {
     int b = (save_best < 0) ? 0xFFFF : save_best;
-    SRAM[0] = 'S'; SRAM[1] = 'P'; SRAM[2] = 'K'; SRAM[3] = 1;
+    SRAM[0] = 'S'; SRAM[1] = 'P'; SRAM[2] = 'K'; SRAM[3] = SAVE_VER;
     SRAM[4] = save_unlocked;
     SRAM[5] = b & 0xFF;
     SRAM[6] = b >> 8;
@@ -1069,7 +1084,7 @@ int main(void) {
         // Stamp sand (B)
         if (stamp_cd > 0) stamp_cd--;
         // Hold B to keep stamping; Down+B stamps under your feet.
-        if (key_held(KEY_B) && stamp_cd == 0) {
+        if (key_held(KEY_B) && stamp_cd == 0 && !level_no_sand[cur_level]) {
             int down = key_held(KEY_DOWN);
             if (stamp_sand(px, py, face, down)) {
                 SFX_STAMP();

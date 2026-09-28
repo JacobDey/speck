@@ -79,13 +79,38 @@ frame) and dropped frames since the last pause. The sand step runs from IWRAM as
 ARM code and sleeps while nothing can move; a heavy sand fall measured 65/228.
 
 Tag a level in `order.txt` with `# float-gem` when its gem hangs in the air on
-purpose.
+purpose, and `# no-sand` to turn stamping off (the banner says so). The first four
+levels are no-sand: straight platforming with thwomps, each teaching one idea before
+sand shows up in level 5:
+
+1. **first steps** - jump steps and spike pits; a thwomp drops on anyone who stops under it.
+2. **stepping stones** - rising islands; land in a thwomp's shadow, step out of it, hop on.
+3. **leapfrog** - thwomps on the floor charge along it; jump over them as they come.
+4. **hot stones** - the only footholds are thwomps, and they fire upward when you stand on them.
+
+`python tools/sim_play.py <level> R40 RA12 .8 ...` replays held inputs (L R A D,
+`.` = nothing, then a frame count) frame by frame with Speck's movement and the
+thwomp AI ported from `main.c`, and reports the gem or what killed Speck.
+`python tools/solve_play.py <level>` searches for such a run and prints it, which
+proves a no-sand level is beatable. Both treat sand as static wall, so they're
+exact only for levels without sand.
+
+Level-design numbers from the sim: a full jump rises 20px (5 cells) and carries
+60px at top speed; a tap rises 11px. The longest gap Speck can clear, edge to edge,
+is 16 cells flat (14 jumping up 2 cells, 17 jumping down 2), counting coyote time
+and corner landings, so a platform can only be skipped if the gaps on both sides plus
+its width come to 16 cells or less. A running landing slides ~28px, so a 4-cell
+platform means hopping straight off again. A thwomp whose box spans Speck's height
+(say, a thwomp stepping stone 1-4 cells higher than the one Speck stands on) sees it
+sideways and charges, so thwomp footholds should be level or step down.
 
 ## Save
 
 SRAM (`SRAM_V113` tag): furthest level reached, plus fewest deaths and fastest
 time over a full run from level 1 (runs that use the debug skip don't count). The web page mirrors SRAM to `localStorage` so progress
-survives reloads.
+survives reloads. Saves from before the four no-sand openers (format version 1) load
+with their furthest level moved up by 4 and their full-run records cleared, since the
+run is now longer.
 
 ## Web
 

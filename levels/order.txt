@@ -1,5 +1,10 @@
 # Play order, one level file per line; the last entry is the finale.
 # Tags after "#": float-gem = gem hangs in the air on purpose (silences the lint warning).
+#   no-sand = B does nothing (pure platforming; sand would bridge the gaps).
+first-steps.txt  # no-sand
+stepping-stones.txt  # no-sand
+leapfrog.txt  # no-sand
+hot-stones.txt  # no-sand
 sandbox.txt
 pillar.txt
 two-thwomps.txt

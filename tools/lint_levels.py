@@ -83,6 +83,9 @@ for li in range(nlevels):
             if not any(g[y][x] == "#" for x, y in cells):
                 err(lv, f"spawn ({sx},{sy}) rests at row {rest} in clear view of thwomp at ({tx},{ty})")
 
+    if "no-sand" in tags[li] and find("s"):
+        warn(lv, "no-sand level has starting sand")
+
     if gems:
         gx, gy = gems[0]
         # Gem art hangs ~1 cell low, so allow one empty row before the floor.

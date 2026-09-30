@@ -9,7 +9,7 @@ input) and on which frame. `-v` prints Speck's position and thwomp states each f
 
 Mirrors main.c: Speck's movement/jump/collision, spikes, and thwomp AI (telegraph,
 charge, retract, solid while idle). Sand is treated as static wall, so this is only
-exact for levels without starting sand and without stamping (e.g. no-sand levels).
+exact for levels without starting sand and without stamping (e.g. the four thwomp openers).
 """
 import os
 import re

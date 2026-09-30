@@ -84,9 +84,9 @@ frame) and dropped frames since the last pause. The sand step runs from IWRAM as
 ARM code and sleeps while nothing can move; a heavy sand fall measured 65/228.
 
 Tag a level in `order.txt` with `# float-gem` when its gem hangs in the air on
-purpose, and `# no-sand` to turn stamping off (the banner says so). The first four
-levels are no-sand: straight platforming with thwomps, each teaching one idea before
-sand shows up in level 5:
+purpose. Every level lets Speck stamp sand. The first four have no starting sand:
+platforming with thwomps, each teaching one idea before sand piles show up in level 5
+(stamping works there too, so sand can bridge their gaps):
 
 1. **first steps** - jump steps and spike pits; a thwomp drops on anyone who stops under it.
 2. **stepping stones** - rising islands; land in a thwomp's shadow, step out of it, hop on.
@@ -97,8 +97,8 @@ sand shows up in level 5:
 `.` = nothing, then a frame count) frame by frame with Speck's movement and the
 thwomp AI ported from `main.c`, and reports the gem or what killed Speck.
 `python tools/solve_play.py <level>` searches for such a run and prints it, which
-proves a no-sand level is beatable. Both treat sand as static wall, so they're
-exact only for levels without sand.
+proves a level is beatable without stamping. Both treat sand as static wall, so they're
+exact only for levels without starting sand, played without stamping.
 
 Level-design numbers from the sim: a full jump rises 20px (5 cells) and carries
 60px at top speed; a tap rises 11px. The longest gap Speck can clear, edge to edge,
@@ -113,7 +113,7 @@ sideways and charges, so thwomp footholds should be level or step down.
 
 SRAM (`SRAM_V113` tag): furthest level reached, plus fewest deaths and fastest
 time over a full run from level 1 (runs that use the debug skip don't count). The web page mirrors SRAM to `localStorage` so progress
-survives reloads. Saves from before the four no-sand openers (format version 1) load
+survives reloads. Saves from before the four thwomp openers (format version 1) load
 with their furthest level moved up by 4 and their full-run records cleared, since the
 run is now longer.
 

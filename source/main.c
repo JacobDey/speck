@@ -506,7 +506,6 @@ static void draw_banner(void) {
     str_int(buf, cur_level + 1); // two digits from level 10 on
     text_center(64, buf, CLR_WHITE);
     text_center(78, level_names[cur_level], COL_SAND);
-    if (level_no_sand[cur_level]) text_center(92, "no sand here", COL_WALL2);
 }
 
 static void show_banner(void) {
@@ -538,7 +537,7 @@ static void save_load(void) {
 }
 
 #define SAVE_VER 2
-// Version 1 saves predate the 4 no-sand opening levels: every level number since moved up
+// Version 1 saves predate the 4 thwomp opening levels: every level number since moved up
 // by 4, and full-run records were for a shorter run.
 #define V1_SHIFT 4
 
@@ -1084,7 +1083,7 @@ int main(void) {
         // Stamp sand (B)
         if (stamp_cd > 0) stamp_cd--;
         // Hold B to keep stamping; Down+B stamps under your feet.
-        if (key_held(KEY_B) && stamp_cd == 0 && !level_no_sand[cur_level]) {
+        if (key_held(KEY_B) && stamp_cd == 0) {
             int down = key_held(KEY_DOWN);
             if (stamp_sand(px, py, face, down)) {
                 SFX_STAMP();

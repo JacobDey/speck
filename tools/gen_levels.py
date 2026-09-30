@@ -33,10 +33,6 @@ for name, _ in levels:
         label = "the " + label
     out.append(f'    "{label}",')
 out.append("};")
-# Levels tagged no-sand in order.txt: stamping is off (pure platforming).
-out.append("static const u8 level_no_sand[NLEVELS] = {")
-out.append("    " + ", ".join("1" if "no-sand" in t else "0" for t in tags) + ",")
-out.append("};")
 new = "\n".join(out) + "\n"
 
 path = os.path.join("source", "levels.h")
